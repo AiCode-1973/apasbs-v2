@@ -1,0 +1,9 @@
+/config/env.php
+/config/reciclalead.php
+/logs/
+/node_modules/
+/uploads/cirurgias/*
+!/uploads/cirurgias/.htaccess
+*.log
+.DS_Store
+Thumbs.db

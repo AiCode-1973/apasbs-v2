@@ -1,0 +1,30 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Redireciona tudo para index.php, exceto arquivos e pastas existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Bloqueia acesso direto a arquivos sensíveis
+<FilesMatch "\.(sql|log|env|md|json|lock|css\.map)$">
+    Require all denied
+</FilesMatch>
+
+# Bloqueia pastas de código-fonte e ferramentas
+RedirectMatch 404 ^/.*/(config|core|layouts|modules|sql|src|tools|node_modules)/.*$
+
+# Cabeçalhos de segurança
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "same-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Limite de upload alinhado ao validado no PHP (10 MB por arquivo)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 60M
+</IfModule>

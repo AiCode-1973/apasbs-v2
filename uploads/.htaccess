@@ -1,0 +1,19 @@
+# Nada aqui é servido direto pelo servidor web.
+#
+# Todo arquivo desta pasta — manual, anexo de cirurgia, guia e pedido médico
+# de uma autorização — é entregue pelo PHP, que antes confere o login, a
+# permissão do módulo e registra quem baixou. Sem esta linha, a URL do
+# arquivo seria uma porta lateral: quem tivesse o endereço leria o documento
+# de um paciente sem estar logado e sem deixar rastro.
+#
+# Os nomes em disco já são aleatórios, mas endereço aleatório é segredo, e
+# segredo vaza — no histórico do navegador, no print, no grupo de WhatsApp.
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

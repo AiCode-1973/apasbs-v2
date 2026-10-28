@@ -1,0 +1,884 @@
+@import "tailwindcss";
+
+/* Modo escuro por classe no <html> (o toggle fica no topbar) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Arquivos varridos para gerar apenas as classes realmente usadas */
+@source "../index.php";
+@source "../layouts/**/*.php";
+@source "../modules/**/*.php";
+@source "../core/**/*.php";
+
+/* ── Tipografia embarcada ────────────────────────────────────────────────
+   Inter variável, servida pelo próprio servidor. Sem CDN, sem depender de
+   qual fonte o Windows tem instalada. Os caminhos são relativos a
+   assets/css/app.css, que é onde este arquivo é compilado.
+   ---------------------------------------------------------------------- */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+                   U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+                   U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+                   U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+2113, U+2C60-2C7F;
+}
+
+@theme {
+    /* Paleta institucional herdada da v1 (azul-marinho APASBS) */
+    --color-marine-50:  #eef0fc;
+    --color-marine-100: #d5dbf7;
+    --color-marine-200: #adbcf0;
+    --color-marine-300: #88a0ea;
+    --color-marine-400: #6286e3;
+    --color-marine-500: #436fcf;
+    --color-marine-600: #395fb3;
+    --color-marine-700: #2b4a8e;
+    --color-marine-800: #1c3365;
+    --color-marine-900: #0d1c3c;
+    --color-marine-950: #061027;
+
+    /* Azul da marca APAS, usado como acento pontual */
+    --color-apas-500: #35b4eb;
+    --color-apas-600: #015198;
+
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+    --radius-xl2: 0.75rem;
+
+    --shadow-card: 0 1px 2px rgb(13 28 60 / 0.05), 0 1px 3px rgb(13 28 60 / 0.06);
+    --shadow-pop:  0 10px 30px -10px rgb(13 28 60 / 0.32);
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        scrollbar-gutter: stable;
+    }
+
+    body {
+        @apply bg-slate-100 text-[0.875rem] leading-relaxed text-slate-700 antialiased;
+        @apply dark:bg-slate-950 dark:text-slate-300;
+        font-family: var(--font-sans);
+        font-feature-settings: "cv05" 1, "cv08" 1, "ss03" 1;
+    }
+
+    /* Números alinham em coluna nas tabelas */
+    table, .num, time { font-variant-numeric: tabular-nums; }
+
+    /* Foco visível e consistente em tudo que é interativo */
+    :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+        @apply outline-none ring-2 ring-marine-500/70 ring-offset-2 ring-offset-white;
+        @apply dark:ring-offset-slate-950;
+    }
+
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { @apply bg-transparent; }
+    ::-webkit-scrollbar-thumb { @apply rounded-full bg-slate-300 dark:bg-slate-700; }
+    ::-webkit-scrollbar-thumb:hover { @apply bg-slate-400 dark:bg-slate-600; }
+
+    [x-cloak] { display: none !important; }
+
+    ::selection { @apply bg-marine-200 text-marine-950; }
+}
+
+@layer components {
+
+    /* ── Botões ───────────────────────────────────────────────────────── */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-[0.4rem]
+               text-[0.8125rem] font-medium leading-5
+               transition-[background-color,border-color,color,box-shadow] duration-150
+               disabled:cursor-not-allowed disabled:opacity-60;
+    }
+    .btn-sm  { @apply gap-1.5 rounded-md px-2.5 py-1 text-xs; }
+    .btn-icon{ @apply rounded-lg p-2; }
+
+    .btn-primary {
+        @apply bg-marine-600 text-white shadow-sm
+               hover:bg-marine-700 active:bg-marine-800
+               dark:bg-marine-600 dark:hover:bg-marine-500;
+    }
+    .btn-outline {
+        @apply border border-slate-300 bg-white text-slate-700
+               hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900
+               dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300
+               dark:hover:border-slate-600 dark:hover:bg-slate-800 dark:hover:text-white;
+    }
+    .btn-ghost {
+        @apply text-slate-500 hover:bg-slate-200/70 hover:text-slate-900
+               dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white;
+    }
+    .btn-danger {
+        @apply bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800;
+    }
+    .btn-danger-outline {
+        @apply border border-slate-300 bg-white text-slate-700
+               hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700
+               dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300
+               dark:hover:border-rose-900 dark:hover:bg-rose-950/50 dark:hover:text-rose-300;
+    }
+
+    /* Ações de linha: todas neutras. A cor só aparece na intenção do usuário,
+       para a lixeira não ser o elemento mais chamativo de cada linha. */
+    .btn-acao {
+        @apply inline-flex h-8 w-8 items-center justify-center rounded-md
+               text-slate-400 transition-colors duration-150
+               hover:bg-slate-100 hover:text-marine-700
+               dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-marine-300;
+    }
+    .btn-acao-perigo {
+        @apply hover:bg-rose-50 hover:text-rose-600
+               dark:hover:bg-rose-950/50 dark:hover:text-rose-400;
+    }
+    .btn-acao-off {
+        @apply inline-flex h-8 w-8 cursor-not-allowed items-center justify-center
+               rounded-md text-slate-200 dark:text-slate-800;
+    }
+
+    /* ── Superfícies ──────────────────────────────────────────────────── */
+    .card {
+        @apply rounded-xl2 border border-slate-200 bg-white shadow-card
+               dark:border-slate-800 dark:bg-slate-900;
+    }
+    .card-header {
+        @apply flex flex-wrap items-center justify-between gap-3
+               border-b border-slate-200 px-4 py-3
+               dark:border-slate-800;
+    }
+    .card-title  { @apply text-[0.8125rem] font-semibold text-marine-900 dark:text-slate-100; }
+    .card-corpo  { @apply p-4; }
+
+    /* Barra de ferramentas embutida no card (busca + filtros) */
+    .toolbar {
+        @apply flex flex-wrap items-center gap-2 border-b border-slate-200 px-4 py-3
+               dark:border-slate-800;
+    }
+    /* ── Paginação ────────────────────────────────────────────────────── */
+    .btn-pag {
+        @apply inline-flex h-7 min-w-7 items-center justify-center rounded-md border
+               border-transparent px-2 text-xs font-medium text-slate-600
+               transition-colors hover:border-slate-300 hover:bg-slate-100
+               hover:text-slate-900 dark:text-slate-400 dark:hover:border-slate-700
+               dark:hover:bg-slate-800 dark:hover:text-slate-100;
+        font-variant-numeric: tabular-nums;
+    }
+    .btn-pag-atual {
+        @apply border-marine-600 bg-marine-600 text-white
+               hover:border-marine-600 hover:bg-marine-600 hover:text-white
+               dark:border-marine-500 dark:bg-marine-600 dark:text-white;
+    }
+    .pag-reticencia { @apply px-0.5 text-xs text-slate-400 dark:text-slate-600; }
+
+    .toolbar-rodape {
+        @apply flex flex-wrap items-center justify-between gap-3
+               border-t border-slate-200 px-4 py-3 text-xs text-slate-500
+               dark:border-slate-800 dark:text-slate-400;
+    }
+
+    /* ── Formulários ──────────────────────────────────────────────────── */
+    .label {
+        @apply mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-400;
+    }
+    .input, .select, .textarea {
+        @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-[0.4rem]
+               text-[0.8125rem] leading-6 text-slate-900 placeholder:text-slate-400
+               transition-[border-color,box-shadow] duration-150
+               focus:border-marine-500 focus:outline-none focus:ring-2 focus:ring-marine-500/20
+               dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100
+               dark:placeholder:text-slate-500 dark:focus:border-marine-500;
+    }
+    .input-sm { @apply py-1 text-xs; }
+
+    /* Seta própria no select — o triângulo nativo do Windows destoa do resto */
+    .select {
+        @apply cursor-pointer appearance-none bg-no-repeat pr-9;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-position: right 0.65rem center;
+        background-size: 1rem;
+    }
+    .dark .select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    /* Campo com ícone à esquerda */
+    .campo-icone { @apply relative; }
+    .campo-icone > svg:first-child {
+        @apply pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400;
+    }
+    .campo-icone > .input { @apply pl-9; }
+
+    /* Campo de dinheiro: o "R$" é fixo, não digitado. Quem preenche só pensa
+       no número, e o que está sendo lançado fica óbvio na tela. */
+    .campo-moeda { @apply relative; }
+    .campo-moeda > .moeda-simbolo {
+        @apply pointer-events-none absolute left-3 top-1/2 -translate-y-1/2
+               select-none text-[0.8125rem] font-semibold leading-none text-slate-400
+               dark:text-slate-500;
+    }
+    .campo-moeda > .input    { @apply pl-9 text-right; }
+    .campo-moeda > .input-sm { @apply pl-8; }
+    .moeda-simbolo-sm        { @apply left-2.5 text-xs; }
+
+    /* Formulário em duas colunas: contexto à esquerda, campos à direita.
+       É o que separa um formulário "de sistema" de uma pilha de inputs. */
+    .form-secao {
+        @apply grid gap-3 border-b border-slate-200 py-5
+               first:pt-0 last:border-0 last:pb-0
+               lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10
+               dark:border-slate-800;
+    }
+    .form-secao-titulo { @apply text-[0.875rem] font-semibold text-marine-900 dark:text-white; }
+    .form-secao-desc   { @apply mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400; }
+    .form-campos       { @apply grid gap-4 sm:grid-cols-2; }
+    .form-largo        { @apply sm:col-span-2; }
+    .form-acoes        { @apply mt-4 flex flex-wrap items-center justify-end gap-2; }
+
+    .input-error {
+        @apply border-rose-400 focus:border-rose-500 focus:ring-rose-500/20
+               dark:border-rose-700;
+    }
+
+    /* Indicador de envio em andamento */
+    .girando {
+        @apply inline-block h-3.5 w-3.5 animate-spin rounded-full
+               border-2 border-current border-t-transparent;
+    }
+    .erro-campo { @apply mt-1 flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400; }
+    .ajuda      { @apply mt-1 text-xs text-slate-500 dark:text-slate-400; }
+    .obrigatorio{ @apply text-rose-500; }
+
+    /* Checkbox próprio: o nativo fica pequeno e destoa no modo escuro */
+    .check {
+        @apply h-[1.15rem] w-[1.15rem] shrink-0 cursor-pointer appearance-none rounded-[0.3rem]
+               border border-slate-300 bg-white bg-center bg-no-repeat align-middle
+               transition-[background-color,border-color] duration-150
+               hover:border-marine-400
+               checked:border-marine-600 checked:bg-marine-600
+               disabled:cursor-not-allowed disabled:opacity-50
+               dark:border-slate-600 dark:bg-slate-800 dark:hover:border-marine-500;
+        background-size: 0.85rem;
+    }
+    .check:checked {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+    }
+
+    /* Área de clique confortável ao redor do checkbox nas tabelas */
+    .check-alvo {
+        @apply inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md
+               transition-colors hover:bg-slate-100 dark:hover:bg-slate-800;
+    }
+
+    /* ── Tabelas ──────────────────────────────────────────────────────── */
+    .tabela { @apply w-full text-left text-[0.8125rem]; }
+    .tabela thead th {
+        @apply whitespace-nowrap border-b border-slate-200 bg-slate-50/80 px-4 py-2.5
+               text-[0.65rem] font-bold uppercase tracking-wider text-slate-500
+               dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-400;
+    }
+    .tabela tbody td {
+        @apply border-t border-slate-100 px-4 py-2.5 align-middle
+               dark:border-slate-800/80;
+    }
+    .tabela tbody tr { @apply transition-colors duration-100 hover:bg-slate-50 dark:hover:bg-slate-800/40; }
+    .tabela tbody tr:first-child td { @apply border-t-0; }
+
+    /* Rodapé de totais. Sem esta regra a célula fica sem padding nenhum e o
+       "Total" escorrega para fora do alinhamento das colunas de cima. */
+    .tabela tfoot td {
+        @apply border-t border-slate-200 bg-slate-50/70 px-4 py-2.5 align-middle
+               font-semibold text-marine-900
+               dark:border-slate-800 dark:bg-slate-900/60 dark:text-white;
+    }
+    .tabela tfoot td.celula-suave { @apply font-normal text-slate-500 dark:text-slate-400; }
+
+    /* Primeira coluna fixa na rolagem horizontal (matriz de permissões).
+       A célula precisa de fundo opaco próprio, senão o conteúdo passa por baixo. */
+    .tabela-fixa th:first-child,
+    .tabela-fixa td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        box-shadow: 1px 0 0 0 var(--color-slate-200);
+    }
+    .dark .tabela-fixa th:first-child,
+    .dark .tabela-fixa td:first-child { box-shadow: 1px 0 0 0 var(--color-slate-800); }
+
+    .tabela-fixa tbody td:first-child { @apply bg-white dark:bg-slate-900; }
+    .tabela-fixa thead th:first-child { @apply z-[2] bg-slate-50 dark:bg-slate-900; }
+    .tabela-fixa tbody tr:hover td:first-child { @apply bg-slate-50 dark:bg-slate-800; }
+
+    .celula-principal { @apply font-medium text-slate-900 dark:text-slate-100; }
+    .celula-suave     { @apply text-slate-500 dark:text-slate-400; }
+    .mono             { @apply font-mono text-xs; }
+
+    /* ── Badges ───────────────────────────────────────────────────────── */
+    .badge {
+        @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5
+               text-[0.6875rem] font-medium;
+    }
+    .badge-verde   { @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400; }
+    .badge-cinza   { @apply bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400; }
+    .badge-azul    { @apply bg-marine-50 text-marine-700 dark:bg-marine-500/10 dark:text-marine-300; }
+    .badge-ambar   { @apply bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400; }
+    .badge-rosa    { @apply bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400; }
+    .badge-violeta { @apply bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400; }
+    .badge-ceu     { @apply bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400; }
+    .badge-ponto::before { @apply h-1.5 w-1.5 rounded-full bg-current content-['']; }
+    .badge-contorno{ @apply border border-slate-200 bg-transparent text-slate-500 dark:border-slate-700 dark:text-slate-400; }
+
+    /* ── Navegação lateral ────────────────────────────────────────────── */
+    .nav-link {
+        @apply flex items-center gap-3 rounded-lg px-3 py-[0.45rem] text-[0.8125rem] font-medium
+               text-marine-200 transition-colors duration-150
+               hover:bg-white/10 hover:text-white;
+    }
+    .nav-link-ativo {
+        @apply bg-marine-700/90 text-white shadow-[inset_2px_0_0_0_var(--color-apas-500)];
+    }
+    .nav-secao {
+        @apply px-3 pb-1 pt-4 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-marine-300/60;
+    }
+
+    /* ── Alertas ──────────────────────────────────────────────────────── */
+    .alerta {
+        @apply flex items-start gap-2.5 rounded-lg border px-3.5 py-2.5 text-[0.8125rem];
+    }
+    .alerta-sucesso { @apply border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300; }
+    .alerta-erro    { @apply border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300; }
+    .alerta-aviso   { @apply border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300; }
+    .alerta-info    { @apply border-marine-200 bg-marine-50 text-marine-900 dark:border-marine-900/60 dark:bg-marine-950/40 dark:text-marine-200; }
+
+    /* ── Cabeçalho de página ──────────────────────────────────────────── */
+    .titulo-pagina { @apply text-lg font-semibold tracking-tight text-marine-900 dark:text-white; }
+    .sub-pagina    { @apply mt-0.5 text-[0.8125rem] text-slate-500 dark:text-slate-400; }
+
+    /* ── Estado vazio ─────────────────────────────────────────────────── */
+    .vazio {
+        @apply flex flex-col items-center justify-center gap-2.5 px-6 py-14 text-center;
+    }
+    .vazio-icone {
+        @apply flex h-12 w-12 items-center justify-center rounded-xl
+               bg-slate-100 text-slate-400
+               dark:bg-slate-800 dark:text-slate-500;
+    }
+    .vazio-titulo { @apply text-[0.8125rem] font-semibold text-slate-700 dark:text-slate-200; }
+    .vazio-texto  { @apply max-w-sm text-[0.8125rem] text-slate-500 dark:text-slate-400; }
+
+    /* ── Agenda da central ────────────────────────────────────────────── */
+
+    /* Etiqueta do médico. A cor entra por --medico, definida na marcação
+       com .medico-1..6; o nome SEMPRE aparece escrito ao lado dela. */
+    .med-ponto {
+        @apply inline-block h-2.5 w-2.5 shrink-0 rounded-full;
+        background: var(--medico, theme(colors.slate.400));
+    }
+    .med-etiqueta {
+        @apply inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5
+               text-[0.6875rem] font-semibold leading-4;
+        color: var(--medico, theme(colors.slate.600));
+        background: color-mix(in oklab, var(--medico, #94a3b8) 12%, transparent);
+    }
+
+    /* Célula de dia do calendário */
+    .cal-grade {
+        @apply grid grid-cols-7 gap-px rounded-lg bg-slate-200 dark:bg-slate-800;
+    }
+    .cal-cabecalho {
+        @apply bg-slate-50 py-1.5 text-center text-[0.6875rem] font-semibold
+               uppercase tracking-wide text-slate-500
+               dark:bg-slate-900 dark:text-slate-400;
+    }
+    .cal-dia {
+        @apply flex min-h-[6.5rem] flex-col gap-1 bg-white p-1.5
+               dark:bg-slate-900;
+    }
+    .cal-dia-fora  { @apply bg-slate-50/70 dark:bg-slate-950/60; }
+    .cal-dia-hoje  { @apply ring-1 ring-inset ring-marine-500; }
+    .cal-dia-num   { @apply text-[0.6875rem] font-semibold text-slate-500 dark:text-slate-400; }
+    .cal-dia-hoje .cal-dia-num { @apply text-marine-600 dark:text-marine-300; }
+
+    /* Dia bloqueado: hachura + texto do motivo (nunca só a cor) */
+    .cal-dia-bloqueado {
+        background-image: repeating-linear-gradient(
+            45deg,
+            theme(colors.slate.100) 0 6px,
+            theme(colors.slate.200) 6px 12px
+        );
+    }
+    .dark .cal-dia-bloqueado {
+        background-image: repeating-linear-gradient(
+            45deg,
+            theme(colors.slate.900) 0 6px,
+            theme(colors.slate.800) 6px 12px
+        );
+    }
+
+    /* Bloco de atendimento dentro do dia */
+    .cal-bloco {
+        @apply block rounded-md border-l-[3px] px-1.5 py-1 text-left
+               transition-colors duration-150
+               hover:bg-slate-50 dark:hover:bg-slate-800;
+        border-left-color: var(--medico, theme(colors.slate.400));
+        background: color-mix(in oklab, var(--medico, #94a3b8) 8%, transparent);
+    }
+    .cal-bloco-medico { @apply block truncate text-[0.6875rem] font-semibold leading-4; color: var(--medico); }
+    /* As vagas quebram linha em vez de cortar: “4 COLONO” cortado vira “4 COL…”,
+       e aí a folha impressa perde exatamente a informação que interessa. */
+    .cal-bloco-vagas  { @apply block text-[0.625rem] leading-[1.15] text-slate-500 dark:text-slate-400; }
+
+    /* Marca do TechSallus. Verde + ícone de check + a palavra escrita: quem
+       não distingue a cor lê o texto do mesmo jeito. */
+    /* Mesmo tamanho e peso das outras linhas do bloco — só a cor e o check
+       mudam. O ícone acompanha, senão ele é que puxa a altura da linha. */
+    .cal-bloco-tech {
+        @apply mt-0.5 inline-flex items-center gap-0.5 text-[0.625rem] font-medium
+               leading-[1.15] text-emerald-700 dark:text-emerald-400;
+    }
+
+    /* ── Corpo de um POP ──────────────────────────────────────────────── */
+    .pop-secao  { @apply mb-6 last:mb-0; }
+    .pop-titulo {
+        @apply mb-2 text-[0.9375rem] font-semibold text-marine-900 dark:text-white;
+    }
+    .pop-texto  { @apply mb-2 text-[0.9375rem] leading-relaxed text-slate-700 dark:text-slate-300; }
+
+    .pop-passos {
+        @apply ml-0 list-none space-y-2 text-[0.9375rem] leading-relaxed
+               text-slate-700 dark:text-slate-300;
+        counter-reset: pop-passo;
+    }
+    .pop-passos > li {
+        @apply relative pl-9;
+        counter-increment: pop-passo;
+    }
+    .pop-passos > li::before {
+        content: counter(pop-passo);
+        @apply absolute left-0 top-0.5 flex h-6 w-6 items-center justify-center
+               rounded-full bg-marine-50 text-[0.6875rem] font-bold text-marine-700
+               dark:bg-marine-600/20 dark:text-marine-300;
+    }
+
+    .pop-alerta {
+        @apply mb-4 rounded-lg border-l-4 border-amber-400 bg-amber-50/70 px-4 py-3
+               text-[0.875rem] leading-relaxed text-amber-900
+               dark:border-amber-500/60 dark:bg-amber-500/10 dark:text-amber-200;
+    }
+    .pop-alerta p:last-child { @apply mb-0; }
+    .pop-alerta-titulo {
+        @apply mb-1 flex items-center gap-1.5 font-semibold;
+    }
+
+    /* Modelo pronto para copiar. Fonte monoespaçada e quebra preservada:
+       o que está na tela é exatamente o que vai para o WhatsApp. */
+    .pop-mensagem {
+        @apply overflow-x-auto whitespace-pre-wrap break-words rounded-lg border
+               border-slate-200 bg-slate-50 px-4 py-3 font-mono text-[0.8125rem]
+               leading-relaxed text-slate-800
+               dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-200;
+    }
+
+    /* ── Folha do calendário (impressão) ──────────────────────────────── */
+    /* Tabela, não grid: a quebra de página de <table> é previsível. */
+    .folha-cal {
+        @apply w-full table-fixed border-collapse;
+    }
+    .folha-cal th {
+        @apply border border-slate-300 bg-slate-100 py-1 text-center
+               text-[0.6rem] font-bold uppercase tracking-wider text-slate-600;
+    }
+    .folha-cal td {
+        @apply border border-slate-300 p-1 align-top;
+        height: 2.6cm;
+    }
+    .folha-cal-fora { @apply bg-slate-50; }
+    .folha-cal-dia  { @apply mb-0.5 block text-[0.65rem] font-bold text-slate-500; }
+
+    /* Dia bloqueado: hachura + o motivo escrito. A hachura sozinha não
+       explica nada, e some numa impressora ruim. */
+    .folha-cal-bloqueado {
+        background-image: repeating-linear-gradient(
+            45deg,
+            theme(colors.slate.50) 0 5px,
+            theme(colors.slate.200) 5px 10px
+        );
+    }
+    .folha-cal-aviso {
+        @apply mb-1 block bg-white/85 px-1 py-0.5 text-[0.58rem]
+               font-semibold leading-tight text-slate-700;
+    }
+
+    .folha-cal-bloco {
+        @apply mb-1 block border-l-2 pl-1.5 leading-tight;
+        border-left-color: var(--medico, theme(colors.slate.400));
+    }
+    .folha-cal-medico   { @apply block text-[0.62rem] font-bold text-slate-900; }
+    .folha-cal-vagas    { @apply block text-[0.58rem] text-slate-600; }
+    .folha-cal-ocupacao { @apply whitespace-nowrap font-semibold; }
+    .folha-cal-tech     { @apply block text-[0.55rem] font-bold text-slate-900; }
+
+    /* ── Mapa de sala (tela) ──────────────────────────────────────────── */
+    /* Tabela e não grid: a coluna da sala precisa ficar grudada na rolagem
+       horizontal — sem o nome da sala à vista, a linha do meio não diz nada. */
+    .mapa {
+        @apply w-full border-collapse text-left;
+        min-width: 52rem;
+    }
+    .mapa thead th {
+        @apply border-b border-slate-200 bg-slate-50 px-2 py-2 text-[0.6875rem]
+               font-semibold uppercase tracking-wider text-slate-500
+               dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400;
+    }
+    .mapa tbody td {
+        @apply border-b border-l border-slate-100 p-1.5 align-top
+               dark:border-slate-800/80;
+        width: 16%;
+    }
+    .mapa tbody tr:hover td { @apply bg-slate-50/60 dark:bg-slate-900/30; }
+
+    .mapa-canto, .mapa-sala {
+        @apply sticky left-0 z-10 bg-white dark:bg-slate-950;
+    }
+    .mapa-sala {
+        @apply border-b border-slate-100 px-2 py-2 align-top dark:border-slate-800/80;
+        width: 6.5rem;
+    }
+    .mapa-sala-nome { @apply block text-[0.8125rem] font-semibold text-marine-900 dark:text-white; }
+    .mapa-sala-obs  { @apply mt-0.5 block text-[0.6875rem] font-normal leading-snug text-slate-500 dark:text-slate-400; }
+
+    .mapa-item {
+        @apply mb-1 block rounded-md border-l-2 px-2 py-1
+               leading-tight transition-colors last:mb-0;
+    }
+
+    /* Cada turno tem sua cor: âmbar de manhã, índigo à tarde. A cor não
+       identifica sozinha — o título da grade continua escrito "Manhã" e
+       "Tarde", e o horário está dentro de cada ocupação. Ela serve para
+       saber em que grade você está depois de rolar meia tela. */
+    .mapa-item-manha {
+        @apply border-amber-400 bg-amber-50/70 hover:bg-amber-100/80
+               dark:border-amber-500/70 dark:bg-amber-500/10 dark:hover:bg-amber-500/20;
+    }
+    .mapa-item-tarde {
+        @apply border-indigo-400 bg-indigo-50/70 hover:bg-indigo-100/80
+               dark:border-indigo-500/70 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20;
+    }
+
+    /* Choque em vermelho, e não em âmbar: âmbar agora é o turno da manhã, e
+       problema precisa continuar sendo a cor mais forte da tela. */
+    .mapa-item-conflito {
+        @apply border-rose-500 bg-rose-50 hover:bg-rose-100
+               dark:border-rose-500 dark:bg-rose-500/15 dark:hover:bg-rose-500/25;
+    }
+
+    .mapa-cabecalho-manha th {
+        @apply border-b-2 border-b-amber-300 bg-amber-50/60 text-amber-800
+               dark:border-b-amber-500/40 dark:bg-amber-500/5 dark:text-amber-300/90;
+    }
+    .mapa-cabecalho-tarde th {
+        @apply border-b-2 border-b-indigo-300 bg-indigo-50/60 text-indigo-800
+               dark:border-b-indigo-500/40 dark:bg-indigo-500/5 dark:text-indigo-300/90;
+    }
+
+    /* Bolinha ao lado do título da grade — a legenda da cor */
+    .turno-ponto {
+        @apply inline-block h-2 w-2 shrink-0 rounded-full;
+    }
+    .turno-ponto-manha { @apply bg-amber-400; }
+    .turno-ponto-tarde { @apply bg-indigo-400; }
+
+    .mapa-prof { @apply block text-[0.75rem] font-semibold text-slate-800 dark:text-slate-100; }
+    .mapa-esp  { @apply block text-[0.6875rem] text-slate-500 dark:text-slate-400; }
+    .mapa-hora { @apply block text-[0.6875rem] font-medium text-slate-600 dark:text-slate-300; }
+    .mapa-obs  { @apply block text-[0.625rem] italic leading-snug text-slate-500 dark:text-slate-400; }
+    .mapa-tag {
+        @apply ml-0.5 rounded bg-marine-100 px-1 text-[0.5625rem] font-bold uppercase
+               text-marine-700 dark:bg-marine-500/20 dark:text-marine-200;
+    }
+    .mapa-aviso {
+        @apply mt-0.5 inline-flex items-center gap-0.5 text-[0.625rem] font-semibold
+               text-rose-700 dark:text-rose-400;
+    }
+    .mapa-tag-manha {
+        @apply bg-amber-200/70 text-amber-900 dark:bg-amber-500/25 dark:text-amber-200;
+    }
+    .mapa-tag-tarde {
+        @apply bg-indigo-200/70 text-indigo-900 dark:bg-indigo-500/25 dark:text-indigo-200;
+    }
+    /* Sala livre em vermelho: é a informação que a central mais procura no
+       mapa — onde dá para encaixar um médico novo. Em cinza claro ela se
+       perdia no meio da grade. */
+    .mapa-livre {
+        @apply block px-2 py-1 text-[0.6875rem] font-semibold uppercase tracking-wide
+               text-rose-600 dark:text-rose-400;
+    }
+    .mapa-mais {
+        @apply mt-0.5 inline-flex items-center justify-center rounded p-0.5 text-slate-300
+               transition-colors hover:bg-slate-100 hover:text-marine-600
+               dark:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-marine-300;
+    }
+
+    /* Números do rodapé do mapa */
+    .rotulo-num { @apply text-[0.6875rem] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400; }
+    .valor-num  { @apply mt-0.5 text-2xl font-semibold leading-none text-marine-900 dark:text-white; }
+
+    /* ── Mapa de sala (papel) ─────────────────────────────────────────── */
+    .folha-mapa { @apply w-full table-fixed border-collapse; }
+    .folha-mapa th {
+        @apply border border-slate-300 bg-slate-100 px-1 py-1 text-left
+               text-[0.6rem] font-bold uppercase tracking-wider text-slate-600;
+    }
+    .folha-mapa td {
+        @apply border border-slate-300 p-1 align-top;
+        height: 1.6cm;
+    }
+    /* No papel a cor do turno vira uma faixa clara no cabeçalho e um traço
+       na lateral de cada ocupação. Impressora preto e branco transforma isso
+       em cinza — e o mapa continua legível, porque o turno também está
+       escrito acima da tabela. */
+    .folha-mapa-manha thead th { @apply bg-amber-100; }
+    .folha-mapa-tarde thead th { @apply bg-indigo-100; }
+    .folha-mapa-item-manha { @apply border-l-2 border-amber-400 pl-1; }
+    .folha-mapa-item-tarde { @apply border-l-2 border-indigo-400 pl-1; }
+
+    .folha-mapa-canto, .folha-mapa-sala { width: 2.2cm; }
+    .folha-mapa-sala   { @apply align-top text-[0.62rem] text-slate-900; }
+    .folha-mapa-item   { @apply mb-1 block leading-tight last:mb-0; }
+    .folha-mapa-prof   { @apply block text-[0.62rem] font-bold text-slate-900; }
+    .folha-mapa-esp    { @apply block text-[0.56rem] text-slate-600; }
+    .folha-mapa-hora   { @apply block text-[0.58rem] font-semibold text-slate-800; }
+    .folha-mapa-obs    { @apply block text-[0.54rem] italic text-slate-600; }
+    .folha-mapa-livre  {
+        @apply block text-[0.6rem] font-bold uppercase tracking-wide text-rose-600;
+    }
+
+    /* ── Folha dos documentos da autorização (impressão) ───────────────── */
+    /* Na tela a foto não precisa ocupar a página inteira; no papel, sim —
+       a regra do tamanho está no @media print. */
+    .folha-anexo {
+        @apply max-h-[70vh] w-auto max-w-full rounded-lg border border-slate-200 object-contain;
+    }
+
+    /* ── Folha do OPME (impressão) ────────────────────────────────────── */
+    .folha-opme { @apply w-full border-collapse; font-size: 7.5pt; }
+    .folha-opme th {
+        @apply border border-slate-300 bg-slate-100 px-1 py-1 text-left
+               text-[0.58rem] font-bold uppercase tracking-wide text-slate-600;
+    }
+    .folha-opme td { @apply border border-slate-300 px-1 py-1 align-top text-slate-800; }
+    .folha-opme tfoot td { @apply bg-slate-50 font-bold; }
+
+    /* ── Barra de ocupação ────────────────────────────────────────────── */
+    /* `block` é obrigatório: a barra é um <span>, e sem isso a altura h-1.5
+       não pega e ela vira uma pílula gorda fora de contexto flex. */
+    .barra {
+        @apply block h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800;
+    }
+    .barra > span { @apply block h-full rounded-full; background: var(--medico, theme(colors.marine.500)); }
+    .barra-cheia > span { @apply bg-rose-500; }
+}
+
+/* ── Paleta categórica dos médicos ───────────────────────────────────── */
+/* Validada com o verificador do dataviz: contraste dentro da faixa segura
+   nos dois modos e distinguível em protanopia/deuteranopia/tritanopia.
+   Mesmo assim a cor nunca identifica sozinha — o nome vai escrito junto. */
+.medico-1 { --medico: #395fb3; }
+.medico-2 { --medico: #059669; }
+.medico-3 { --medico: #d97706; }
+.medico-4 { --medico: #7c3aed; }
+.medico-5 { --medico: #0891b2; }
+.medico-6 { --medico: #e11d48; }
+
+.dark .medico-1 { --medico: #6286e3; }
+.dark .medico-2 { --medico: #0f9d76; }
+.dark .medico-3 { --medico: #d97706; }
+.dark .medico-4 { --medico: #9772f0; }
+.dark .medico-5 { --medico: #0e9cbd; }
+.dark .medico-6 { --medico: #ef4c65; }
+
+/* ── Comportamento da sidebar (colapso em telas grandes) ─────────────── */
+#sidebar { transition: width .2s ease, transform .2s ease; }
+#conteudo { transition: margin-left .2s ease; }
+
+@media (min-width: 1024px) {
+    #sidebar  { width: 15rem; transform: none !important; }
+    #conteudo { margin-left: 15rem; }
+
+    .sb-colapsada #sidebar  { width: 4.25rem; }
+    .sb-colapsada #conteudo { margin-left: 4.25rem; }
+
+    .sb-colapsada .sb-label,
+    .sb-colapsada .sb-logo-completo,
+    .sb-colapsada .nav-secao { display: none; }
+
+    .sb-colapsada .sb-logo-marca { display: inline-flex; }
+
+    .sb-colapsada .nav-link { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
+
+    .sb-colapsada .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
+}
+
+.sb-logo-marca { display: none; }
+
+/* ── Impressão ───────────────────────────────────────────────────────── */
+.so-impressao { display: none; }
+
+@media print {
+    @page { margin: 14mm; size: A4 portrait; }
+
+    /* `footer` estava nesta lista e escondia justamente o rodapé das folhas
+       de impressão — o "impresso em … por …" que diz quando e por quem o
+       papel saiu. Nenhum layout tem footer próprio; quem precisa sumir no
+       papel usa .nao-imprimir, como todo o resto. */
+    #sidebar, .topbar, .nao-imprimir { display: none !important; }
+    #conteudo { margin-left: 0 !important; }
+
+    html, body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 11pt;
+    }
+
+    /* O modo escuro não vai para o papel */
+    .dark body, .dark .card { background: #fff !important; color: #000 !important; }
+
+    .so-impressao { display: block !important; }
+
+    main { padding: 0 !important; }
+
+    .card, section { width: 100% !important; max-width: none !important; }
+
+    .card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        background: #fff !important;
+    }
+
+    .imprimir-em-bloco { display: block !important; }
+
+    /* POP no papel: a caixa de alerta e o modelo de mensagem precisam
+       continuar visíveis mesmo sem gráficos de segundo plano. */
+    .pop-alerta {
+        border-left: 1mm solid #b45309 !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .pop-mensagem {
+        border: 0.3mm solid #64748b !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .pop-secao, .pop-alerta { break-inside: avoid; }
+
+    /* Folha do calendário: aqui a cor é informação, não decoração. Sem
+       print-color-adjust o navegador descarta fundo e hachura. */
+    .folha-cal,
+    .folha-cal th,
+    .folha-cal td,
+    .folha-cal-bloqueado,
+    .folha-tinta,
+    .med-ponto {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* As linhas da grade em MILÍMETROS, não em px, e num cinza escuro.
+       1px de cinza-claro dá 0,26 mm no papel: na tela aparece, mas a
+       impressora não consegue marcar e o calendário sai sem grade. */
+    .folha-cal th,
+    .folha-cal td {
+        border: 0.3mm solid #475569 !important;
+    }
+    .folha-cal { border: 0.5mm solid #1e293b !important; }
+    .folha-cal thead th { border-bottom-width: 0.5mm !important; }
+
+    .folha-cal { font-size: 8pt; }
+    .folha-cal td { height: 2.2cm; }
+    .folha-cal tr { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Mapa de sala: mesma regra de espessura da folha do calendário. */
+    .folha-mapa,
+    .folha-mapa th,
+    .folha-mapa td,
+    .folha-mapa-item-manha,
+    .folha-mapa-item-tarde,
+    .folha-mapa-livre,
+    .turno-ponto {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* A regra geral de impressão pinta tudo de preto; "Livre" é exceção, e
+       precisa dizer isso depois dela. */
+    .folha-mapa-livre { color: #dc2626 !important; }
+
+    /* O traço do turno também precisa de espessura física para sair */
+    .folha-mapa-item-manha { border-left: 0.6mm solid #d97706 !important; }
+    .folha-mapa-item-tarde { border-left: 0.6mm solid #4f46e5 !important; }
+    .folha-mapa th,
+    .folha-mapa td { border: 0.3mm solid #475569 !important; }
+    .folha-mapa { border: 0.5mm solid #1e293b !important; font-size: 8pt; }
+    .folha-mapa thead th { border-bottom-width: 0.5mm !important; }
+    .folha-mapa tr { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Altura fixa por linha: com oito salas, a grade preenche a folha em
+       paisagem em vez de ficar espremida no alto da página. */
+    .folha-mapa td { height: 1.7cm; }
+
+    .folha-opme,
+    .folha-opme th,
+    .folha-opme td {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .folha-opme th,
+    .folha-opme td { border: 0.25mm solid #475569 !important; }
+    .folha-opme { border: 0.4mm solid #1e293b !important; }
+    .folha-opme tr { break-inside: avoid; page-break-inside: avoid; }
+    .folha-opme thead { display: table-header-group; }
+
+    /* Cada turno começa em uma página. */
+    .quebra-pagina { break-before: page; page-break-before: always; }
+
+    /* A foto da guia ocupa a folha inteira sem estourar: altura limitada
+       pela própria página (A4 menos a margem e o cabeçalho da folha), e
+       object-contain para não cortar nada do documento. Guia cortada no
+       papel é guia que o convênio devolve. */
+    .folha-anexo {
+        max-height: 23cm !important;
+        max-width: 100% !important;
+        width: auto !important;
+        border: 0.25mm solid #94a3b8 !important;
+        break-inside: avoid;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* O traço da cor do médico também precisa de espessura física */
+    .folha-cal-bloco { border-left-width: 0.6mm !important; }
+
+    /* Se alguém mandar imprimir a tela do calendário em vez da folha:
+       lá as linhas são o fundo aparecendo pelo vão do grid, e fundo é a
+       primeira coisa que o navegador descarta. Aqui viram borda de verdade. */
+    .cal-grade { gap: 0 !important; background: #fff !important; }
+    .cal-dia, .cal-cabecalho {
+        border: 0.25mm solid #475569 !important;
+        background: #fff !important;
+    }
+    .card + .card, section + section { margin-top: 8mm; }
+
+    a[href]::after { content: ""; }
+    .badge { border: 1px solid #94a3b8 !important; background: #fff !important; color: #000 !important; }
+    .tabela thead th { background: #f1f5f9 !important; color: #000 !important; }
+}

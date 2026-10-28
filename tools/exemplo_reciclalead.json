@@ -1,0 +1,55 @@
+{
+    "_comentario": [
+        "Amostra REAL das respostas da API do ReciclaLead, capturada em 25/08/2026",
+        "para a competência 06/2026. Serve para testar o coletor sem rede e sem",
+        "credencial:",
+        "",
+        "    php tools/coletar_reciclalead.php --mes=2026-06 --simular=tools/exemplo_reciclalead.json --verboso",
+        "",
+        "Dois valores foram completados por aritmética, porque a captura cortou o",
+        "fim da resposta: a fila 'Autorização' (o que faltava para fechar 2506) e",
+        "'new_contacts'. Todo o resto é exatamente o que a API devolveu."
+    ],
+
+    "tempos": [
+        {
+            "qtd_total_atendimentos": "2506",
+            "qtd_tickets_pendentes": "0",
+            "qtd_demanda_ativa": "0",
+            "qtd_demanda_receptiva": "2506",
+            "tma": { "hours": 6, "minutes": 58 },
+            "tme": { "hours": 3, "minutes": 41 },
+            "total_contacts": "15697",
+            "active_contacts": "0",
+            "new_contacts": "586"
+        }
+    ],
+
+    "motivos": [
+        { "label": "Agendamento Concluido",       "qtd": "829", "percentage": "33.08" },
+        { "label": "Fora de expediente",          "qtd": "490", "percentage": "19.55" },
+        { "label": "Agendamento não Realizado",   "qtd": "432", "percentage": "17.24" },
+        { "label": "Sem interação com Chat",      "qtd": "410", "percentage": "16.36" },
+        { "label": "Indisponibilidade de Agenda", "qtd": "184", "percentage": "7.34" },
+        { "label": "Dúvidas ",                    "qtd": "89",  "percentage": "3.55" },
+        { "label": "Outros Setores",              "qtd": "33",  "percentage": "1.32" },
+        { "label": "Outros",                      "qtd": "24",  "percentage": "0.96" },
+        { "label": "Horário Expirado",            "qtd": "15",  "percentage": "0.60" }
+    ],
+
+    "filas": [
+        { "label": "Não informado",  "qtd": "1475", "pertentual": "58.86" },
+        { "label": "Consulta",       "qtd": "568",  "pertentual": "22.67" },
+        { "label": "Exames",         "qtd": "297",  "pertentual": "11.85" },
+        { "label": "Procedimentos",  "qtd": "84",   "pertentual": "3.35" },
+        { "label": "Autorização",    "qtd": "82",   "pertentual": "3.27" }
+    ],
+
+    "atendentes": [
+        { "name": "Atendente Paloma Anjo",         "count": 558 },
+        { "name": "Atendente Douglas Júnior",      "count": 529 },
+        { "name": "Administrador",                 "count": 482 },
+        { "name": "Atendente Isabella Costa",      "count": 477 },
+        { "name": "Autorização - Isabella Santos", "count": 202 }
+    ]
+}

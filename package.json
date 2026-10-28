@@ -1,0 +1,18 @@
+{
+  "name": "apasbs-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "APASBS — Sistema de Gestão em Saúde (PHP 8 + Tailwind CSS + Alpine.js)",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./assets/css/app.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "alpinejs": "^3.16.2"
+  }
+}
